@@ -1,0 +1,15 @@
+networks:
+  main_network:
+    driver: bridge
+services:
+  main:
+    build:
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    container_name: client_for3party
+    networks:
+      - main_network
+    volumes:
+      - ./:/app/main:cached
+    command: tail -f /dev/null
