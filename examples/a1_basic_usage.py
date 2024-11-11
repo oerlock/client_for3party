@@ -13,7 +13,7 @@ from aiohttp import BasicAuth
 from pydantic import HttpUrl, EmailStr, BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from client_for2party.client import ClientBase
+from client_for3party.client import ClientBase
 
 logger = logging.getLogger(__name__)
 
