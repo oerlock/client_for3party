@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 [project]
 name = "client_for3party"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     { name = "Erlock Lewis", email = "oerlock@gmail.com" },
 ]
@@ -15,7 +15,14 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
+dependencies = [
+    "aiohttp",
+    "pydantic>=2.0.0",
+]
 [project.urls]
 Homepage = "https://github.com/oerlock/client_for3party"
 Issues = "https://github.com/oerlock/client_for3party/issues"
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
