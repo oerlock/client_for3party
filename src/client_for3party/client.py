@@ -1,16 +1,21 @@
-import inspect
 import logging
 
 import aiohttp
 from pydantic import HttpUrl
 
+from core.aiohttp_trace.tracker import raise_for_status_with_json, RequestAuditor
+
 logger = logging.getLogger(__name__)
 
 
 class ClientBase:
-    def __init__(self, base_url: HttpUrl, session: aiohttp.ClientSession | None = None):
-        self.base_url = base_url
-        self.session = session or aiohttp.ClientSession()
+    def __init__(self, base_url: HttpUrl | None = None, session: aiohttp.ClientSession | None = None, **kwargs):
+        if base_url and session:
+            raise ValueError('Only one of base_url and session can be passed.')
+        trace_configs = kwargs.get('trace_configs', [])
+        trace_configs.append(RequestAuditor().get_trace_config())
+        self.session = session or aiohttp.ClientSession(base_url=base_url, raise_for_status=raise_for_status_with_json,
+                                                        trace_configs=trace_configs, **kwargs)
 
     async def close(self):
         await self.session.close()
@@ -25,26 +30,7 @@ class ClientBase:
         if self.session.closed:
             return
         logger.warning(
-            "ClientResolvePay instance was not properly closed. "
+            "Client instance was not properly closed. "
             "Please use it within an 'async with' block or call `close()` explicitly."
         )
         self.session.close()
-
-    @staticmethod
-    async def is_success(resp: aiohttp.ClientResponse, resp_params: dict | None = None) -> bool:
-        try:
-            resp.raise_for_status()
-        except aiohttp.ClientResponseError as e:
-            # Get the current call stack information
-            stack = inspect.stack()
-            # Retrieve information about the caller in the stack
-            caller = stack[
-                1]  # stack[0] contains the current function's information, stack[1] refers to the caller's location
-            file_name = caller.filename
-            line_number = caller.lineno
-            msg_resp = await resp.text()
-            logger.error(f'{file_name}:{line_number}: {e}\n\t{msg_resp=}\n\t{resp.request_info=}')
-            if resp_params is not None:
-                logger.debug(f'{resp_params=}')
-            return False
-        return True
