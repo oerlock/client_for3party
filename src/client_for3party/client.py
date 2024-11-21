@@ -3,7 +3,7 @@ import logging
 import aiohttp
 from pydantic import HttpUrl
 
-from core.aiohttp_trace.tracker import raise_for_status_with_json, RequestAuditor
+from .core.aiohttp_trace.tracker import raise_for_status_with_json, RequestAuditor
 
 logger = logging.getLogger(__name__)
 
