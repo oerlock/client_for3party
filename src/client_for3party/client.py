@@ -27,7 +27,7 @@ class ClientBase:
         await self.close()
 
     def __del__(self):
-        if self.session.closed:
+        if not getattr(self, 'session', None) or self.session.closed:
             return
         logger.warning(
             "Client instance was not properly closed. "
