@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class ClientBase:
-    def __init__(self, base_url: HttpUrl | None = None, session: aiohttp.ClientSession | None = None, **kwargs):
+    def __init__(self, base_url: HttpUrl | str | None = None, session: aiohttp.ClientSession | None = None, **kwargs):
         if base_url and session:
             raise ValueError('Only one of base_url and session can be passed.')
         trace_configs = kwargs.get('trace_configs', [])
