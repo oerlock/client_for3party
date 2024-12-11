@@ -42,7 +42,7 @@ async def raise_for_status_with_json(resp: ClientResponse):
         data_received = await resp.json() if 'application/json' in content_type else None
     except ContentTypeError as e:
         data_received = None
-    if not resp._in_context:
+    if hasattr(resp, '_in_context') and not resp._in_context:
         resp.release()
     raise ClientResponseErrorWithMore(
         resp.request_info,
