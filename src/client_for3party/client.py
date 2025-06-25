@@ -12,7 +12,8 @@ class ClientBase:
     def __init__(self, base_url: HttpUrl | str | None = None, session: aiohttp.ClientSession | None = None, **kwargs):
         trace_configs = kwargs.get('trace_configs', [])
         trace_configs.append(RequestAuditor().get_trace_config())
-        self.session = session or aiohttp.ClientSession(base_url=base_url, raise_for_status=raise_for_status_with_json,
+        self.session = session or aiohttp.ClientSession(base_url=str(base_url),
+                                                        raise_for_status=raise_for_status_with_json,
                                                         trace_configs=trace_configs, **kwargs)
 
     async def close(self):
